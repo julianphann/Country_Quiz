@@ -1,3 +1,9 @@
+/**
+ *
+ * @author Julian Phan and Mary Nguyen
+ * @teacher Dr. Krzysztof J. Kochut
+ * @class CSCI 4060
+ */
 package edu.uga.cs.countryquiz;
 
 import android.os.Bundle;

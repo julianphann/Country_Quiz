@@ -69,12 +69,23 @@ public abstract class AsyncTask<Param, Result> {
         });
     }
 
-    // This method is just like in the AsyncTask class
+    /**
+     * Starts the execution of the asynchronous task.
+     * @param arguments Parameters passed to the doInBackground method.
+     */
     public void execute( Param... arguments ){
         executeInBackground( arguments );
     }
 
-    // These abstract methods are just like in the AsyncTask class
+    /**
+     * Override this method to perform computation in the background.
+     * @param arguments Parameters passed to the task.
+     * @return The result of the computation.
+     */
     protected abstract Result doInBackground( Param... arguments );
+    /**
+     * Override this method to perform UI updates after the background computation is complete.
+     * @param result The result of the background computation.
+     */
     protected abstract void onPostExecute( Result result );
 }
