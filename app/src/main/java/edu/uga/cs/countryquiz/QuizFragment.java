@@ -1,47 +1,29 @@
 package edu.uga.cs.countryquiz;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link QuizFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import java.util.Arrays;
+import java.util.List;
+
+
 public class QuizFragment extends Fragment {
+    private QuizLayout layout;
+    private int questionIndex;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_QUESTION_INDEX = "question_index";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public QuizFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QuizFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static QuizFragment newInstance(String param1, String param2) {
+    public static QuizFragment newInstance(int questionIndex) {
         QuizFragment fragment = new QuizFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_QUESTION_INDEX, questionIndex);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,15 +32,89 @@ public class QuizFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            questionIndex = getArguments().getInt(ARG_QUESTION_INDEX, 0);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_quiz, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        layout = new ViewModelProvider(requireActivity()).get(QuizLayout.class);
+
+        // Check if we've reached the end of the quiz
+        if (layout.isQuizComplete()) {
+            showResults();
+            return;
+        }
+
+        QuizQuestion question = layout.getQuestions().get(questionIndex);
+
+        // Set up the question text
+        TextView questionText = view.findViewById(R.id.question_text);
+        questionText.setText(question.getQuestionContent());
+
+        // Set up the answer buttons
+        Button option1 = view.findViewById(R.id.option_1);
+        Button option2 = view.findViewById(R.id.option_2);
+        Button option3 = view.findViewById(R.id.option_3);
+        Button option4 = view.findViewById(R.id.option_4);
+
+        List<Button> optionButtons = Arrays.asList(option1, option2, option3, option4);
+
+        // Set the text for each option button
+        List<String> options = question.getChoices();
+        for (int i = 0; i < options.size(); i++) {
+            optionButtons.get(i).setText(options.get(i));
+
+            final int optionIndex = i;
+            optionButtons.get(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (optionIndex >= 0 && optionIndex < options.size() &&
+                            optionIndex == question.getCorrectAnswerNum()) {
+                        layout.updateScore();
+                    }
+
+
+                    // Move to next question
+                    layout.nextQuestion();
+
+                    if (!layout.isQuizComplete()) {
+                        getParentFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container,
+                                        QuizFragment.newInstance(questionIndex + 1)) // Pass updated index
+                                .addToBackStack(null)
+                                .commit();
+                    } else {
+                        // Show results
+                        showResults();
+                    }
+                }
+            });
+        }
+
+        // Display current question number out of total
+        TextView questionCounter = view.findViewById(R.id.question_counter);
+        questionCounter.setText("Question " + (questionIndex + 1) + "/" +
+                layout.getQuestions().size());
+    }
+
+    private void showResults() {
+       DatabaseHelper databaseHelper = DatabaseHelper.getInstance(requireContext());
+       int score = layout.getScore().getValue() != null ? layout.getScore().getValue() : 0;
+       databaseHelper.insertQuizResult(score);
+
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new ResultFragment())
+                .addToBackStack(null) // Ensure back button doesn't take user back to the quiz
+                .commit();
+
     }
 }

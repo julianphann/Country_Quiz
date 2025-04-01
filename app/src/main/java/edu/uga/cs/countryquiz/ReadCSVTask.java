@@ -34,24 +34,26 @@ public class ReadCSVTask extends AsyncTask<Void, Void, Boolean> {
     // An internal method to execute something in background
 
     @Override
-    protected Boolean doInBackground( Void... voids ) {
+    protected Boolean doInBackground(Void... voids) {
         try {
             SQLiteDatabase database = databaseHelper.getWritableDatabase();
-            boolean countriesInput = countryContinentData(database);
-            return true;
+            return countryContinentData(database);
         } catch (Exception e) {
             Log.e(TAG, "Error with input stream from CSV", e);
             return false;
         }
     }
 
+
     private boolean countryContinentData(SQLiteDatabase database) {
-        try {
-            InputStream inputStream = context.getAssets().open("country_continent.csv");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
+        try (InputStream inputStream = context.getAssets().open("country_continent.csv");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
             database.beginTransaction();
             try {
+                database.delete(DatabaseHelper.TABLE_COUNTRIES, null, null);
+
+                String line;
                 while ((line = reader.readLine()) != null) {
                     String[] row = line.split(",");
                     if (row.length >= 2) {
@@ -69,14 +71,13 @@ public class ReadCSVTask extends AsyncTask<Void, Void, Boolean> {
                 return true;
             } finally {
                 database.endTransaction();
-                reader.close();
-                inputStream.close();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "ERROR IMPORTING COUNTRY AND CONTINENT DATA", e);
             return false;
         }
     }
+
 
 
 

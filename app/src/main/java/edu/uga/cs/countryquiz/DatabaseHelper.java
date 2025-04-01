@@ -1,5 +1,6 @@
 package edu.uga.cs.countryquiz;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,7 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -29,8 +35,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Table: Quizzes
     public static final String TABLE_QUIZZES = "quizzes";
     public static final String QUIZ_ID = "_id";
+    public static final String QUIZ_TITLE = "quiz_title";
     public static final String QUIZ_DATE = "quiz_date";
-    public static final String QUIZ_SCORE = "quiz_score";
+//    public static final String QUIZ_SCORE = "quiz_score";
 
     //Table: Results
     public static final String TABLE_RESULTS = "results";
@@ -55,13 +62,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_QUIZZES =
             "CREATE TABLE " + TABLE_QUIZZES + " ("
                     + QUIZ_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + QUIZ_DATE + " TEXT NOT NULL, "
-                    + QUIZ_SCORE + " INTEGER "
-                    + ")";
+                    + QUIZ_TITLE + " TEXT NOT NULL, "
+                    + QUIZ_DATE + " TEXT )";
 
     public static final String CREATE_TABLE_RESULTS =
             "CREATE TABLE " + TABLE_RESULTS + " (" +
-                    RESULTS_ID + " INTEGER PRIMARY KEY," +
+                    RESULTS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     RESULTS_QUIZ_ID + " INTEGER, " +
                     RESULTS_SCORE + " INTEGER, " +
                     RESULTS_DATE + " TEXT, " +
@@ -82,7 +88,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Private constructor for singleton pattern. Constructor is private, so can only be called from this class
      * @param context The application context.
      */
-    private DatabaseHelper(Context context) { super(context, DB_NAME, null, DB_VERSION); }
+    private DatabaseHelper(Context context) {
+        super(context, DB_NAME, null, DB_VERSION);
+        this.context = context;
+    }
 
     /**
      * Access to the singleton instance of the DatabaseHelper.
@@ -112,8 +121,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(DEBUG_TAG, "Upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which will destroy all old data");
-        db.execSQL("drop table if exists " + TABLE_COUNTRIES);
-        db.execSQL("drop table if exists " + TABLE_QUIZZES);
+        db.execSQL(DELETE_COUNTRIES);
+        db.execSQL(DELETE_QUIZZES);
         db.execSQL(DELETE_RESULTS);
         onCreate(db);
     }
@@ -173,6 +182,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return countryContinent;
     }
+
+    public List<String> getAllQuizResults() {
+        List<String> results = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT " + RESULTS_SCORE + ", " + RESULTS_DATE +
+                        " FROM " + TABLE_RESULTS +
+                        " ORDER BY " + RESULTS_DATE + " DESC",
+                null
+        );
+
+        while (cursor.moveToNext()) {
+            int score = cursor.getInt(0);
+            String date = cursor.getString(1);
+            results.add("Date: " + date + " | Score: " + score + "/6");
+        }
+
+        cursor.close();
+        return results;
+    }
+
+    public void insertQuizResult(int score) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // gets the date and time of the quiz completion and formats it
+        String date = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
+
+        // create a new quiz record
+        ContentValues quizValues = new ContentValues();
+        quizValues.put(QUIZ_TITLE, "Quiz");
+        quizValues.put(QUIZ_DATE, date);
+        long quizId = db.insert(TABLE_QUIZZES, null, quizValues);
+
+        // inserts the quiz result
+        ContentValues resultValues = new ContentValues();
+        resultValues.put(RESULTS_QUIZ_ID, quizId);
+        resultValues.put(RESULTS_SCORE, score);
+        resultValues.put(RESULTS_DATE, date);
+        db.insert(TABLE_RESULTS, null, resultValues);
+    }
+
+
 
 }
 
