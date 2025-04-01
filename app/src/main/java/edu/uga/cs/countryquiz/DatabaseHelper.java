@@ -35,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Table: Results
     public static final String TABLE_RESULTS = "results";
     public static final String RESULTS_ID = "_id";
-    public static final String RESULTS_QUIZ_ID = "quiz id";
+    public static final String RESULTS_QUIZ_ID = "quiz_id";
     public static final String RESULTS_SCORE = "results_score";
     public static final String RESULTS_DATE = "results_date";
 
@@ -46,25 +46,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Note that _id is an auto increment primary key, i.e. the database will
     // automatically generate unique id values as keys.
     private static final String CREATE_TABLE_COUNTRIES =
-            "create table " + TABLE_COUNTRIES + " ("
+            "CREATE TABLE " + TABLE_COUNTRIES + " ("
                     + COUNTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COUNTRY_NAME + " TEXT NOT NULL, "
-                    + COUNTRY_CONTINENT + " TEXT NOT NULL"
+                    + COUNTRY_CONTINENT + " TEXT NOT NULL "
                     + ")";
 
     private static final String CREATE_TABLE_QUIZZES =
-            "create table " + TABLE_QUIZZES + " ("
+            "CREATE TABLE " + TABLE_QUIZZES + " ("
                     + QUIZ_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + QUIZ_DATE + " TEXT NOT NULL, "
-                    + QUIZ_SCORE + " INTEGER"
+                    + QUIZ_SCORE + " INTEGER "
                     + ")";
 
     public static final String CREATE_TABLE_RESULTS =
-            "create table " + TABLE_RESULTS + " (" +
+            "CREATE TABLE " + TABLE_RESULTS + " (" +
                     RESULTS_ID + " INTEGER PRIMARY KEY," +
-                    RESULTS_QUIZ_ID + "INTEGER," +
-                    RESULTS_SCORE + "INTEGER," +
-                    RESULTS_DATE + " TEXT," +
+                    RESULTS_QUIZ_ID + " INTEGER, " +
+                    RESULTS_SCORE + " INTEGER, " +
+                    RESULTS_DATE + " TEXT, " +
                     "FOREIGN KEY (" + RESULTS_QUIZ_ID + ") REFERENCES " + TABLE_QUIZZES + "(" + QUIZ_ID + "))";
 
     //Delete countries
