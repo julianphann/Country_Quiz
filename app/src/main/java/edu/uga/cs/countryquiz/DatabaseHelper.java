@@ -1,9 +1,14 @@
 package edu.uga.cs.countryquiz;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A SQLiteOpenHelper class to manage database creation and updates.
@@ -12,6 +17,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DEBUG_TAG = "DatabaseHelper";
     private static final String DB_NAME = "CountriesDB";
     private static final int DB_VERSION = 1;
+
+    private Context context;
 
     // Table: Countries
     public static final String TABLE_COUNTRIES = "countries";
@@ -24,6 +31,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String QUIZ_ID = "_id";
     public static final String QUIZ_DATE = "quiz_date";
     public static final String QUIZ_SCORE = "quiz_score";
+
+    //Table: Results
+    public static final String TABLE_RESULTS = "results";
+    public static final String RESULTS_ID = "_id";
+    public static final String RESULTS_QUIZ_ID = "quiz id";
+    public static final String RESULTS_SCORE = "results_score";
+    public static final String RESULTS_DATE = "results_date";
+
 
     private static DatabaseHelper instance; // Singleton instance
 
@@ -43,6 +58,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + QUIZ_DATE + " TEXT NOT NULL, "
                     + QUIZ_SCORE + " INTEGER"
                     + ")";
+
+    public static final String CREATE_TABLE_RESULTS =
+            "create table " + TABLE_RESULTS + " (" +
+                    RESULTS_ID + " INTEGER PRIMARY KEY," +
+                    RESULTS_QUIZ_ID + "INTEGER," +
+                    RESULTS_SCORE + "INTEGER," +
+                    RESULTS_DATE + " TEXT," +
+                    "FOREIGN KEY (" + RESULTS_QUIZ_ID + ") REFERENCES " + TABLE_QUIZZES + "(" + QUIZ_ID + "))";
+
+    //Delete countries
+    private static final String DELETE_COUNTRIES =
+            "DROP TABLE IF EXISTS " + TABLE_COUNTRIES;
+
+    //Delete Quizzes
+    private static final String DELETE_QUIZZES =
+            "DROP TABLE IF EXISTS " + TABLE_QUIZZES;
+
+    //Delete results
+    private static final String DELETE_RESULTS =
+            "DROP TABLE IF EXISTS " + TABLE_RESULTS;
     /**
      * Private constructor for singleton pattern. Constructor is private, so can only be called from this class
      * @param context The application context.
@@ -66,6 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_COUNTRIES);
         db.execSQL(CREATE_TABLE_QUIZZES);
+        db.execSQL(CREATE_TABLE_RESULTS);
         Log.d(DEBUG_TAG, "Table " + TABLE_COUNTRIES + " created");
         Log.d(DEBUG_TAG, "Table " + TABLE_QUIZZES + " created");
     }
@@ -78,7 +114,65 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + newVersion + ", which will destroy all old data");
         db.execSQL("drop table if exists " + TABLE_COUNTRIES);
         db.execSQL("drop table if exists " + TABLE_QUIZZES);
+        db.execSQL(DELETE_RESULTS);
         onCreate(db);
     }
+
+    public boolean isDatabase() {
+        File dbFile = context.getDatabasePath(DB_NAME);
+        return dbFile.exists();
+    }
+
+    /**
+     * Checks to see if data is already loaded in the countries table.
+     */
+    public boolean isDataLoaded() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_COUNTRIES, null );
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count > 0;
+    }
+
+    public Map<String, String> getRandomPairs(int count) {
+        Map<String, String> countryContinent = new HashMap<>();
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] projection = {
+                COUNTRY_NAME, COUNTRY_CONTINENT
+        };
+
+        Cursor cursor = database.query(
+                TABLE_COUNTRIES,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                "RANDOM()",
+                String.valueOf(count)
+        );
+
+        try {
+            while (cursor != null && cursor.moveToNext()) {
+                int indexName = cursor.getColumnIndexOrThrow(COUNTRY_NAME);
+                int continentIndex = cursor.getColumnIndexOrThrow(COUNTRY_CONTINENT);
+
+                String countryName = cursor.getString(indexName);
+                String continent = cursor.getString(continentIndex);
+
+                countryContinent.put(countryName, continent);
+
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+
+            }
+        }
+        return countryContinent;
+    }
+
 }
 
