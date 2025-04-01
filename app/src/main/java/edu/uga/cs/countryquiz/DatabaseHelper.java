@@ -223,8 +223,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         resultValues.put(RESULTS_DATE, date);
         db.insert(TABLE_RESULTS, null, resultValues);
     }
-
-
-
 }
 
