@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements ReadCSVTask.OnRea
         Button startQuizBtn = findViewById(R.id.startQuizBtn);
         Button resultsBtn = findViewById(R.id.resultsBtn);
 
+        // Start Quiz button functionality
         startQuizBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,19 +36,17 @@ public class MainActivity extends AppCompatActivity implements ReadCSVTask.OnRea
             }
         });
 
+        // View Results button functionality
         resultsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO Make a ResultScreen
-                //Intent intent = new Intent(MainActivity.this, ResultScreen.class);
-                //startActivity(intent);
-                //TODO
+                Intent intent = new Intent(MainActivity.this, ResultScreen.class);
+                startActivity(intent);
             }
         });
 
         initializeDatabase();
     }
-
 
     private void initializeDatabase() {
         databaseHelper = DatabaseHelper.getInstance(this);
