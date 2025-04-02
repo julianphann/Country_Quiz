@@ -12,7 +12,7 @@ public class ResultScreen extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.results);
 
-        Button homeButton = findViewById(R.id.homeBtn);
+        Button homeButton = findViewById(R.id.home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
