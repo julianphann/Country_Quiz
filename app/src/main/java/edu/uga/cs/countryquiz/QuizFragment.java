@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -42,6 +44,9 @@ public class QuizFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_quiz, container, false);
     }
 
+    RadioGroup radioGroup;
+    RadioButton option1RadioButton, option2RadioButton, option3RadioButton, option4RadioButton;
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -61,10 +66,10 @@ public class QuizFragment extends Fragment {
         questionText.setText(question.getQuestionContent());
 
         // Set up the answer buttons
-        Button option1 = view.findViewById(R.id.option_1);
-        Button option2 = view.findViewById(R.id.option_2);
-        Button option3 = view.findViewById(R.id.option_3);
-        Button option4 = view.findViewById(R.id.option_4);
+        Button option1 = view.findViewById(R.id.radio_button_option1);
+        Button option2 = view.findViewById(R.id.radio_button_option2);
+        Button option3 = view.findViewById(R.id.radio_button_option3);
+        Button option4 = view.findViewById(R.id.radio_button_option4);
 
         List<Button> optionButtons = Arrays.asList(option1, option2, option3, option4);
 

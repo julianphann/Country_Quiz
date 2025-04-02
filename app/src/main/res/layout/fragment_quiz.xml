@@ -32,32 +32,37 @@
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/question_text">
 
-        <Button
-            android:id="@+id/option_1"
+        <RadioGroup
+            android:id="@+id/radio_group_options"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Option 1" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/option_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Option 2" />
+            <RadioButton
+                android:id="@+id/radio_button_option1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Option 1" />
 
-        <Button
-            android:id="@+id/option_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Option 3" />
+            <RadioButton
+                android:id="@+id/radio_button_option2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Option 2" />
 
-        <Button
-            android:id="@+id/option_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Option 4" />
+            <RadioButton
+                android:id="@+id/radio_button_option3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Option 3" />
+
+            <RadioButton
+                android:id="@+id/radio_button_option4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Option 4" />
+
+        </RadioGroup>
 
     </LinearLayout>
 
