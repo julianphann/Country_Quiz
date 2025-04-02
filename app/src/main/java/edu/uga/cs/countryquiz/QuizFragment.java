@@ -2,6 +2,9 @@ package edu.uga.cs.countryquiz;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,6 +17,12 @@ import androidx.viewpager2.widget.ViewPager2;
 public class QuizFragment extends Fragment {
 
     private QuizLayout quizLayout;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -45,5 +54,20 @@ public class QuizFragment extends Fragment {
             }
         });
     }
-}
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_quiz, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_exit) {
+            // Exit the quiz screen
+            requireActivity().finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}
