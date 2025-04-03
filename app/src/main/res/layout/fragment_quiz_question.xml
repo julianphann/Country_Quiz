@@ -39,10 +39,5 @@
             android:layout_height="wrap_content"
             android:text="Option 3" />
 
-        <RadioButton
-            android:id="@+id/radio_button_option4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Option 4" />
     </RadioGroup>
 </LinearLayout>

@@ -74,7 +74,7 @@ public class QuizLayout extends AndroidViewModel {
             List<String> choices = new ArrayList<>();
             choices.add(correctAnswer);
 
-            while (choices.size() < 4 ) {
+            while (choices.size() < 3 ) {
                 String randomContinent = continents[random.nextInt(continents.length)];
                 if (!randomContinent.equals(correctAnswer) && !choices.contains(randomContinent)) {
                     choices.add(randomContinent);

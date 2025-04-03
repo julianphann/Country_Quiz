@@ -83,7 +83,6 @@ public class QuizQuestionFragment extends Fragment {
         ((RadioButton) radioGroup.getChildAt(0)).setText(question.getChoices().get(0));
         ((RadioButton) radioGroup.getChildAt(1)).setText(question.getChoices().get(1));
         ((RadioButton) radioGroup.getChildAt(2)).setText(question.getChoices().get(2));
-        ((RadioButton) radioGroup.getChildAt(3)).setText(question.getChoices().get(3));
         radioGroup.clearCheck(); // Clear any previous selection
 
         // Handle answer selection
