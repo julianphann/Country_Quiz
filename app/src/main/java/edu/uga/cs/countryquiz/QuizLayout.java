@@ -15,13 +15,26 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Arrays;
 
+/**
+ * QuizLayout is a ViewModel class that manages the data and logic for the quiz.
+ * It handles the score, question list, current question number,
+ * database interaction, and overall quiz flow.
+ */
 public class QuizLayout extends AndroidViewModel {
 
     private MutableLiveData<Integer> score = new MutableLiveData<>(0);
+    /**
+     * Returns the LiveData for the current score.
+     * @return LiveData<Integer> - The current score.
+     */
     public LiveData<Integer> getScore() {
         return score;
     }
     private MutableLiveData<Integer> currentQuestionNum = new MutableLiveData<>(0);
+    /**
+     * Returns the LiveData for the current question number.
+     * @return LiveData<Integer> - The current question number.
+     */
     public LiveData<Integer> getCurrentQuestionNum() {
         return currentQuestionNum;
     }
@@ -30,7 +43,11 @@ public class QuizLayout extends AndroidViewModel {
     private Map<String, String> countryContinentResults;
 
     private DatabaseHelper databaseHelper;
-
+    /**
+     * Constructor for QuizLayout. Initializes the database helper,
+     * retrieves random country-continent pairs, and creates the quiz questions.
+     * @param application The application context.
+     */
     public QuizLayout(Application application) {
         super(application);
 
@@ -40,7 +57,10 @@ public class QuizLayout extends AndroidViewModel {
         createCountryQuiz();
 
     }
-
+    /**
+     * Creates the country quiz by fetching random countries and their corresponding
+     * continents, then generating a list of QuizQuestion objects.
+     */
     private void createCountryQuiz() {
         String[] continents = {"Africa", "Antarctica", "Asia", "Oceania", "Europe", "North America", "South America"};
         Random random = new Random();
@@ -70,23 +90,24 @@ public class QuizLayout extends AndroidViewModel {
                     getCorrectAnswerNum
             );
             questions.add(question);
-            }
         }
+    }
+    /**
+     * Returns the list of quiz questions.
+     * @return List<QuizQuestion> - The list of quiz questions.
+     */
     public List<QuizQuestion> getQuestions() {
         return questions;
     }
 
-    // Navigate to next question
-    public void nextQuestion() {
-        if (currentQuestionNum.getValue() != null) {
-            currentQuestionNum.setValue(currentQuestionNum.getValue() + 1);
-        } else {
-            currentQuestionNum.setValue(1);
-        }
+    public void setDatabaseHelper(DatabaseHelper databaseHelper) {
+        this.databaseHelper = databaseHelper;
     }
 
 
-    // Update score when answer is correct
+    /**
+     * Updates the score when the answer is correct.
+     */
     public void updateScore() {
         if (score.getValue() != null) {
             score.setValue(score.getValue() + 1);
@@ -96,13 +117,19 @@ public class QuizLayout extends AndroidViewModel {
     }
 
 
-    // Check if the quiz is complete
+    /**
+     * Checks if the quiz is complete.
+     * @return boolean - True if the quiz is complete, false otherwise.
+     */
     public boolean isQuizComplete() {
         Integer currentNum = currentQuestionNum.getValue();
         return (currentNum != null && currentNum >= questions.size());
     }
 
-
+    /**
+     * Starts a new quiz by resetting the score and current question number,
+     * fetching new country-continent pairs, and recreating the quiz questions.
+     */
     public void startNewQuiz() {
         score.setValue(0);
         currentQuestionNum.setValue(0);
@@ -117,6 +144,23 @@ public class QuizLayout extends AndroidViewModel {
         createCountryQuiz();
     }
 
+    public void submitQuiz() {
+        // Calculate the final score
+        int finalScore = calculateFinalScore();
 
+        // Insert the quiz result into the database
+        if (databaseHelper != null) {
+            databaseHelper.insertQuizResult(finalScore);
+        } else {
+            // Handle the case where databaseHelper is not initialized (e.g., log an error)
+            System.err.println("DatabaseHelper is not initialized.  Make sure to set it before submitting the quiz.");
+        }
 
+        // Update the score LiveData for the ResultFragment to display
+        score.setValue(finalScore);
+    }
+
+    private int calculateFinalScore() {
+        return score.getValue();
+    }
 }

@@ -1,15 +1,19 @@
 package edu.uga.cs.countryquiz;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+/**
+ * An AsyncTask to read country and continent data from a CSV file
+ * and load it into the SQLite database.
+ */
 public class ReadCSVTask extends AsyncTask<Void, Void, Boolean> {
     private static final String TAG = "ReadCSVTask";
 
@@ -17,22 +21,47 @@ public class ReadCSVTask extends AsyncTask<Void, Void, Boolean> {
     private DatabaseHelper databaseHelper;
     private OnReadCSVCompleteListener listener;
 
+    /**
+     * An interface to be implemented by the caller to receive a
+     * callback when the CSV reading and database loading is complete.
+     */
     public interface OnReadCSVCompleteListener {
+        /**
+         * Called when the CSV reading and database loading is complete.
+         * @param good True if the CSV file was read and the data was loaded
+         * successfully, false otherwise.
+         */
         void onReadCSVComplete(boolean good);
     }
 
+    /**
+     * Constructor for ReadCSVTask.
+     * @param context The application context.
+     */
     public ReadCSVTask(Context context) {
         this.context = context;
         this.databaseHelper = DatabaseHelper.getInstance(context);
     }
 
+    /**
+     * Constructor for ReadCSVTask with a completion listener.
+     * @param context The application context.
+     * @param listener The listener to be called when the task is complete.
+     */
     public ReadCSVTask(Context context, OnReadCSVCompleteListener listener) {
         this.context = context;
         this.databaseHelper = DatabaseHelper.getInstance(context);
         this.listener = listener;
     }
-    // An internal method to execute something in background
 
+    /**
+     * Reads the CSV file in the background and loads the country and
+     * continent data into the SQLite database.
+     *
+     * @param voids No parameters are used.
+     * @return True if the CSV file was read and the data was loaded
+     * successfully, false otherwise.
+     */
     @Override
     protected Boolean doInBackground(Void... voids) {
         try {
@@ -44,7 +73,12 @@ public class ReadCSVTask extends AsyncTask<Void, Void, Boolean> {
         }
     }
 
-
+    /**
+     * Reads the country and continent data from the CSV file, inserts
+     * it into the database.
+     * @param database The SQLiteDatabase instance to write to.
+     * @return True if the data was successfully imported.
+     */
     private boolean countryContinentData(SQLiteDatabase database) {
         try (InputStream inputStream = context.getAssets().open("country_continent.csv");
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -78,9 +112,12 @@ public class ReadCSVTask extends AsyncTask<Void, Void, Boolean> {
         }
     }
 
-
-
-
+    /**
+     * Called after the execution of the background task is complete.
+     * Calls the listener with the status of CSV import (success or failure).
+     * @param good True if the CSV file was read and processed successfully.
+     */
+    @Override
     protected void onPostExecute( Boolean good ) {
         if (good) {
             Log.d(TAG, "CSV imported and read correctly.");

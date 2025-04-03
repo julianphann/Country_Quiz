@@ -104,8 +104,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return instance;
     }
-    // Override onCreate method, which will be used to create the database if
-    // it does not exist yet.
+    /**
+     * Override onCreate method, which will be used to create the database if
+     * it does not exist yet.
+     * @param db The database being created.
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_COUNTRIES);
@@ -114,9 +117,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(DEBUG_TAG, "Table " + TABLE_COUNTRIES + " created");
         Log.d(DEBUG_TAG, "Table " + TABLE_QUIZZES + " created");
     }
-    // We should override onUpgrade method, which will be used to upgrade the database if
-    // its version (DB_VERSION) has changed.  This will be done automatically by Android
-    // if the version will be bumped up, as we modify the database schema.
+    /**
+     * We should override onUpgrade method, which will be used to upgrade the database if
+     * its version (DB_VERSION) has changed.  This will be done automatically by Android
+     * if the version will be bumped up, as we modify the database schema.
+     * @param db The database being upgraded.
+     * @param oldVersion The old database version.
+     * @param newVersion The new database version.
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(DEBUG_TAG, "Upgrading database from version " + oldVersion + " to "
@@ -127,6 +135,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Checks if the database file exists.
+     * @return True if the database exists, false otherwise.
+     */
     public boolean isDatabase() {
         File dbFile = context.getDatabasePath(DB_NAME);
         return dbFile.exists();
@@ -134,6 +146,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Checks to see if data is already loaded in the countries table.
+     * @return True if data is loaded, false otherwise.
      */
     public boolean isDataLoaded() {
         SQLiteDatabase db = getReadableDatabase();
@@ -144,6 +157,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
+    /**
+     * Retrieves a map of random country-continent pairs from the database.
+     * @param count The number of random pairs to retrieve.
+     * @return A map where the key is the country name and the value is the continent.
+     */
     public Map<String, String> getRandomPairs(int count) {
         Map<String, String> countryContinent = new HashMap<>();
         SQLiteDatabase database = this.getReadableDatabase();
@@ -183,6 +201,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return countryContinent;
     }
 
+    /**
+     * Retrieves all quiz results from the database, ordered by date in descending order.
+     * @return A list of strings representing the quiz results.
+     */
     public List<String> getAllQuizResults() {
         List<String> results = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -204,6 +226,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return results;
     }
 
+    /**
+     * Inserts a quiz result into the database.
+     * @param score The score of the quiz.
+     */
     public void insertQuizResult(int score) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -222,6 +248,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         resultValues.put(RESULTS_SCORE, score);
         resultValues.put(RESULTS_DATE, date);
         db.insert(TABLE_RESULTS, null, resultValues);
+        db.close(); // Always close the db connection!!
     }
 }
-

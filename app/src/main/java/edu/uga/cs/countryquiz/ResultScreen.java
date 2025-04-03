@@ -11,9 +11,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The ResultScreen activity displays past quiz results to the user.
+ */
 public class ResultScreen extends AppCompatActivity {
     private TextView pastResults;
 
+    /**
+     * Called when the activity is first created. Initializes the user interface
+     * and loads past quiz results from the database.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +41,11 @@ public class ResultScreen extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads past quiz results from the database and displays them in the TextView.
+     * Uses a background thread to perform the database operation and a Handler
+     * to update the UI on the main thread.
+     */
     private void loadResults() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());

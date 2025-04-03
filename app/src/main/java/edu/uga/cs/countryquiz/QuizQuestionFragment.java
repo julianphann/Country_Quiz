@@ -1,6 +1,7 @@
 package edu.uga.cs.countryquiz;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+/**
+ * QuizQuestionFragment is a Fragment that displays a single quiz question
+ * and handles user interaction for answering the question.
+ */
 public class QuizQuestionFragment extends Fragment {
     private static final String ARG_QUESTION_INDEX = "question_index";
     private int questionIndex;
     private QuizLayout quizLayout;
 
+    /**
+     * Creates a new instance of QuizQuestionFragment with the given question index.
+     * @param questionIndex The index of the question to display.
+     * @return A new instance of QuizQuestionFragment.
+     */
     public static QuizQuestionFragment newInstance(int questionIndex) {
         QuizQuestionFragment fragment = new QuizQuestionFragment();
         Bundle args = new Bundle();
@@ -26,12 +36,30 @@ public class QuizQuestionFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Called to create the view for the fragment.
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     * @return The View for the fragment's UI, or null.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_quiz_question, container, false);
     }
 
+    /**
+     * Called immediately after onCreateView() has returned, but before any saved state has been restored in to the view.
+     * Initializes the ViewModel, retrieves the question, and sets up the UI.
+     * @param view The View returned by onCreateView(LayoutInflater, ViewGroup, Bundle).
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -56,24 +84,37 @@ public class QuizQuestionFragment extends Fragment {
         ((RadioButton) radioGroup.getChildAt(1)).setText(question.getChoices().get(1));
         ((RadioButton) radioGroup.getChildAt(2)).setText(question.getChoices().get(2));
         ((RadioButton) radioGroup.getChildAt(3)).setText(question.getChoices().get(3));
+        radioGroup.clearCheck(); // Clear any previous selection
 
         // Handle answer selection
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            int selectedOption = radioGroup.indexOfChild(view.findViewById(checkedId));
+            View radioButton = radioGroup.findViewById(checkedId);
+            int selectedOption = radioGroup.indexOfChild(radioButton);
 
             // Check if the selected option is correct
             if (selectedOption == question.getCorrectAnswerNum()) {
                 quizLayout.updateScore();
+                Log.d("QuizQuestionFragment", "Correct answer selected! Score updated.");
+            } else {
+                Log.d("QuizQuestionFragment", "Incorrect answer selected.");
             }
 
-            // Remove the automatic navigation to the next page
-            // The user will now manually slide to the next question
-            //view.postDelayed(() -> {
-            //    ViewPager2 viewPager = requireActivity().findViewById(R.id.viewpager);
-            //    viewPager.setCurrentItem(questionIndex + 1, true); // Navigate to next page
-            //}, 500); // Delay for smooth transition
+            // Disable RadioGroup to prevent multiple selections
+            for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                radioGroup.getChildAt(i).setEnabled(false);
+            }
         });
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Re-enable RadioButtons
+        RadioGroup radioGroup = getView().findViewById(R.id.radio_group_options);
+        if (radioGroup != null) {
+            for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                radioGroup.getChildAt(i).setEnabled(true);
+            }
+        }
+    }
 }
-
-

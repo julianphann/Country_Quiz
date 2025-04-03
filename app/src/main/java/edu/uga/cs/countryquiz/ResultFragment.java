@@ -64,12 +64,6 @@ public class ResultFragment extends Fragment {
             }
         });
 
-//        view.findViewById(R.id.restart_button).setOnClickListener(v -> {
-//            layout.startNewQuiz();
-//
-//            ViewPager2 viewPager = requireActivity().findViewById(R.id.viewpager);
-//
-//            viewPager.setCurrentItem(0); // Restart from first question
-//        });
+
     }
 }
