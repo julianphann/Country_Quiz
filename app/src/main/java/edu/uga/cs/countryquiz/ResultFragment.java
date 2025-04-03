@@ -26,50 +26,40 @@ public class ResultFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         layout = new ViewModelProvider(requireActivity()).get(QuizLayout.class);
-
         TextView resultText = view.findViewById(R.id.result_text);
-        layout.getScore().removeObservers(getViewLifecycleOwner());
-        layout.getScore().observe(getViewLifecycleOwner(), score -> {
-            int totalQuestions = layout.getQuestions().size();
-            resultText.setText("Your final score is " + score + " out of " + totalQuestions);
-            Log.d("QuizLayout", "Score reset to 0.");
-            Log.d("ResultFragment", "Final score displayed: " + layout.getScore().getValue());
-            DatabaseHelper dbHelper = DatabaseHelper.getInstance(requireContext());
-            dbHelper.insertQuizResult(score); // Call insert method
-        });
+
+        int score = layout.getScore().getValue() != null ? layout.getScore().getValue() : 0;
+        int totalQuestions = layout.getQuestions().size();
+        resultText.setText("Your final score is " + score + " out of " + totalQuestions);
+
+
+        DatabaseHelper dbHelper = DatabaseHelper.getInstance(requireContext());
+        dbHelper.insertQuizResult(score);
+        Log.d("ResultFragment", "Saved final score: " + score);
 
         Button restartBtn = view.findViewById(R.id.restart_button);
-        restartBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                layout.startNewQuiz();
-                requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new QuizFragment())
-                        .commit();
-
-            }
+        restartBtn.setOnClickListener(v -> {
+            layout.startNewQuiz();
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new QuizFragment())
+                    .commit();
         });
 
         Button viewResultsBtn = view.findViewById(R.id.view_all_results_button);
-        viewResultsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(requireActivity(), ResultScreen.class);
-                startActivity(intent);
-            }
+        viewResultsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), ResultScreen.class);
+            startActivity(intent);
         });
 
         Button homeButton = view.findViewById(R.id.home_button);
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // back to MainActivity
-                Intent intent = new Intent(requireActivity(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                requireActivity().finish(); // finish the current activity
-            }
+        homeButton.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            requireActivity().finish();
         });
-
-
     }
+
+
+
 }
