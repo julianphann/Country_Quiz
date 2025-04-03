@@ -70,4 +70,5 @@ public class QuizFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
