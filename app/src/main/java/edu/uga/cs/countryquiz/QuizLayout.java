@@ -131,8 +131,8 @@ public class QuizLayout extends AndroidViewModel {
      * fetching new country-continent pairs, and recreating the quiz questions.
      */
     public void startNewQuiz() {
-        score.setValue(0);
-        currentQuestionNum.setValue(0);
+        score.setValue(0); // Reset score
+        currentQuestionNum.setValue(0); // Reset question index
 
         countryContinentResults = databaseHelper.getRandomPairs(6);
         if (countryContinentResults == null || countryContinentResults.isEmpty()) {
@@ -144,23 +144,4 @@ public class QuizLayout extends AndroidViewModel {
         createCountryQuiz();
     }
 
-    public void submitQuiz() {
-        // Calculate the final score
-        int finalScore = calculateFinalScore();
-
-        // Insert the quiz result into the database
-        if (databaseHelper != null) {
-            databaseHelper.insertQuizResult(finalScore);
-        } else {
-            // Handle the case where databaseHelper is not initialized (e.g., log an error)
-            System.err.println("DatabaseHelper is not initialized.  Make sure to set it before submitting the quiz.");
-        }
-
-        // Update the score LiveData for the ResultFragment to display
-        score.setValue(finalScore);
-    }
-
-    private int calculateFinalScore() {
-        return score.getValue();
-    }
 }

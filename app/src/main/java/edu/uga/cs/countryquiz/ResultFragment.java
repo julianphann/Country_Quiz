@@ -2,6 +2,7 @@ package edu.uga.cs.countryquiz;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +29,13 @@ public class ResultFragment extends Fragment {
 
         TextView resultText = view.findViewById(R.id.result_text);
 
-        int score = layout.getScore().getValue() != null ? layout.getScore().getValue() : 0;
+        layout.getScore().observe(getViewLifecycleOwner(), score -> {
+            int totalQuestions = layout.getQuestions().size();
+            resultText.setText("Your final score is " + score + " out of " + totalQuestions);
+            Log.d("QuizLayout", "Score reset to 0.");
+            Log.d("ResultFragment", "Final score displayed: " + layout.getScore().getValue());
 
-        resultText.setText("Your final score is " + score + " out of " + layout.getQuestions().size());
+        });
 
         Button restartBtn = view.findViewById(R.id.restart_button);
         restartBtn.setOnClickListener(new View.OnClickListener() {
