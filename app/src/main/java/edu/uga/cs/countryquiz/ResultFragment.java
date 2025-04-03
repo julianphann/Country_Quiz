@@ -28,13 +28,14 @@ public class ResultFragment extends Fragment {
         layout = new ViewModelProvider(requireActivity()).get(QuizLayout.class);
 
         TextView resultText = view.findViewById(R.id.result_text);
-
+        layout.getScore().removeObservers(getViewLifecycleOwner());
         layout.getScore().observe(getViewLifecycleOwner(), score -> {
             int totalQuestions = layout.getQuestions().size();
             resultText.setText("Your final score is " + score + " out of " + totalQuestions);
             Log.d("QuizLayout", "Score reset to 0.");
             Log.d("ResultFragment", "Final score displayed: " + layout.getScore().getValue());
-
+            DatabaseHelper dbHelper = DatabaseHelper.getInstance(requireContext());
+            dbHelper.insertQuizResult(score); // Call insert method
         });
 
         Button restartBtn = view.findViewById(R.id.restart_button);
