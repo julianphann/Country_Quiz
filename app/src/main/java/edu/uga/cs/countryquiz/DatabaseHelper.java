@@ -249,7 +249,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // inserts the quiz result
         ContentValues resultValues = new ContentValues();
         resultValues.put(RESULTS_QUIZ_ID, quizId);
-        resultValues.put(RESULTS_SCORE, score);
+        if (score == 0) {
+            resultValues.put(RESULTS_SCORE, score);
+        } else {
+            resultValues.put(RESULTS_SCORE, score + 1);
+        }
         resultValues.put(RESULTS_DATE, date);
         long resultRowId = db.insert(TABLE_RESULTS, null, resultValues);
 
