@@ -92,10 +92,8 @@ public class QuizQuestionFragment extends Fragment {
 
             // Check if the selected option is correct
             if (selectedOption == question.getCorrectAnswerNum()) {
-                if (quizLayout.getScore().getValue() != null && quizLayout.getScore().getValue() < questionIndex + 1) {
-                    quizLayout.updateScore();
-                    Log.d("QuizQuestionFragment", "Correct answer selected! Score updated.");
-                }
+                quizLayout.updateScore();  // Update score directly when correct answer is selected
+                Log.d("QuizQuestionFragment", "Correct answer selected! Score updated.");
             } else {
                 Log.d("QuizQuestionFragment", "Incorrect answer selected.");
             }
@@ -105,6 +103,7 @@ public class QuizQuestionFragment extends Fragment {
                 radioGroup.getChildAt(i).setEnabled(false);
             }
         });
+
 
     }
 
