@@ -83,8 +83,6 @@ public class QuizQuestionFragment extends Fragment {
         // Load current question
         QuizQuestion question = quizLayout.getQuestions().get(questionIndex);
 
-        // Set up UI components
-
         // Set question number dynamically
         TextView questionNumberText = view.findViewById(R.id.question_number);
         questionNumberText.setText("Question: " + (questionIndex + 1) + "/" + quizLayout.getQuestions().size());
@@ -111,11 +109,6 @@ public class QuizQuestionFragment extends Fragment {
                 Log.d("QuizQuestionFragment", "Correct answer selected! Score updated.");
             } else {
                 Log.d("QuizQuestionFragment", "Incorrect answer selected.");
-            }
-
-            // Disable RadioGroup to prevent multiple selections
-            for (int i = 0; i < radioGroup.getChildCount(); i++) {
-                radioGroup.getChildAt(i).setEnabled(false);
             }
         });
     }
