@@ -67,6 +67,14 @@ public class QuizQuestionFragment extends Fragment {
         // Initialize ViewModel
         quizLayout = new ViewModelProvider(requireActivity()).get(QuizLayout.class);
 
+        // Observe changes to the score and update the UI automatically
+        TextView scoreText = view.findViewById(R.id.score_text);
+        quizLayout.getScore().observe(getViewLifecycleOwner(), newScore -> {
+            if (scoreText != null) {
+                scoreText.setText("Score: " + newScore);
+            }
+        });
+
         // Get question index from arguments
         if (getArguments() != null) {
             questionIndex = getArguments().getInt(ARG_QUESTION_INDEX);
@@ -111,6 +119,8 @@ public class QuizQuestionFragment extends Fragment {
             }
         });
     }
+
+
 
 
     @Override
