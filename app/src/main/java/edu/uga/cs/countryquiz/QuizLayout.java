@@ -8,12 +8,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Arrays;
 
 /**
  * QuizLayout is a ViewModel class that manages the data and logic for the quiz.
