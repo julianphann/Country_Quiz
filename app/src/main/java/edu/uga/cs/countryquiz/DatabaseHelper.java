@@ -249,7 +249,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // inserts the quiz result
         ContentValues resultValues = new ContentValues();
         resultValues.put(RESULTS_QUIZ_ID, quizId);
-        if (score == 0) {
+        if (score < 3) {
             resultValues.put(RESULTS_SCORE, score);
         } else {
             resultValues.put(RESULTS_SCORE, score + 1);
