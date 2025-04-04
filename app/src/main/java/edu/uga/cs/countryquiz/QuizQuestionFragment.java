@@ -76,13 +76,20 @@ public class QuizQuestionFragment extends Fragment {
         QuizQuestion question = quizLayout.getQuestions().get(questionIndex);
 
         // Set up UI components
+
+        // Set question number dynamically
+        TextView questionNumberText = view.findViewById(R.id.question_number);
+        questionNumberText.setText("Question: " + (questionIndex + 1) + "/" + quizLayout.getQuestions().size());
+
+        // Set question text
         TextView questionText = view.findViewById(R.id.question_text);
         questionText.setText(question.getQuestionContent());
 
+        // Set answer choices dynamically
         RadioGroup radioGroup = view.findViewById(R.id.radio_group_options);
-        ((RadioButton) radioGroup.getChildAt(0)).setText(question.getChoices().get(0));
-        ((RadioButton) radioGroup.getChildAt(1)).setText(question.getChoices().get(1));
-        ((RadioButton) radioGroup.getChildAt(2)).setText(question.getChoices().get(2));
+        ((RadioButton) radioGroup.getChildAt(0)).setText("A. " + question.getChoices().get(0));
+        ((RadioButton) radioGroup.getChildAt(1)).setText("B. " + question.getChoices().get(1));
+        ((RadioButton) radioGroup.getChildAt(2)).setText("C. " + question.getChoices().get(2));
         radioGroup.clearCheck(); // Clear any previous selection
 
         // Handle answer selection
@@ -103,9 +110,8 @@ public class QuizQuestionFragment extends Fragment {
                 radioGroup.getChildAt(i).setEnabled(false);
             }
         });
-
-
     }
+
 
     @Override
     public void onDestroyView() {

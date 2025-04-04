@@ -5,6 +5,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Question Number -->
+    <TextView
+        android:id="@+id/question_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Question: 1/6"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
     <!-- Question Text -->
     <TextView
         android:id="@+id/question_text"
@@ -22,22 +31,22 @@
         android:layout_height="wrap_content">
 
         <RadioButton
-            android:id="@+id/radio_button_option1"
+            android:id="@+id/radio_button_option_a"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Option 1" />
+            android:text="A. Option 1" />
 
         <RadioButton
-            android:id="@+id/radio_button_option2"
+            android:id="@+id/radio_button_option_b"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Option 2" />
+            android:text="B. Option 2" />
 
         <RadioButton
-            android:id="@+id/radio_button_option3"
+            android:id="@+id/radio_button_option_c"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Option 3" />
+            android:text="C. Option 3" />
 
     </RadioGroup>
 </LinearLayout>
