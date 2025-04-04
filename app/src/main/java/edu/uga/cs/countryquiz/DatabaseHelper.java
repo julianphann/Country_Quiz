@@ -236,18 +236,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // gets the date and time of the quiz completion and formats it
         String date = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
 
+        Log.d("DatabaseHelper", "Inserting quiz result with score: " + score + " at " + date);
+
         // create a new quiz record
         ContentValues quizValues = new ContentValues();
         quizValues.put(QUIZ_TITLE, "Quiz");
         quizValues.put(QUIZ_DATE, date);
         long quizId = db.insert(TABLE_QUIZZES, null, quizValues);
 
+        Log.d("DatabaseHelper", "Inserted quiz record with ID: " + quizId);
+
         // inserts the quiz result
         ContentValues resultValues = new ContentValues();
         resultValues.put(RESULTS_QUIZ_ID, quizId);
         resultValues.put(RESULTS_SCORE, score);
         resultValues.put(RESULTS_DATE, date);
-        db.insert(TABLE_RESULTS, null, resultValues);
+        long resultRowId = db.insert(TABLE_RESULTS, null, resultValues);
+
+        Log.d("DatabaseHelper", "Inserted result record with ID: " + resultRowId);
+
         db.close(); // Always close the db connection!!
     }
+
 }

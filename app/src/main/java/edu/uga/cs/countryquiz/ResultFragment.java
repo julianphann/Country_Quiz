@@ -11,10 +11,10 @@ import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager2.widget.ViewPager2;
 
 public class ResultFragment extends Fragment {
     private QuizLayout layout;
+    private boolean isDataSaved = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,14 +28,15 @@ public class ResultFragment extends Fragment {
         layout = new ViewModelProvider(requireActivity()).get(QuizLayout.class);
 
         TextView resultText = view.findViewById(R.id.result_text);
-        layout.getScore().removeObservers(getViewLifecycleOwner());
         layout.getScore().observe(getViewLifecycleOwner(), score -> {
             int totalQuestions = layout.getQuestions().size();
             resultText.setText("Your final score is " + score + " out of " + totalQuestions);
-            Log.d("QuizLayout", "Score reset to 0.");
             Log.d("ResultFragment", "Final score displayed: " + layout.getScore().getValue());
-            DatabaseHelper dbHelper = DatabaseHelper.getInstance(requireContext());
-            dbHelper.insertQuizResult(score); // Call insert method
+            if (!isDataSaved) {
+                DatabaseHelper dbHelper = DatabaseHelper.getInstance(requireContext());
+                dbHelper.insertQuizResult(score);
+                isDataSaved = true;
+            }
         });
 
         Button restartBtn = view.findViewById(R.id.restart_button);
@@ -43,9 +44,9 @@ public class ResultFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 layout.startNewQuiz();
+                isDataSaved = false;
                 requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new QuizFragment())
                         .commit();
-
             }
         });
 
@@ -62,14 +63,11 @@ public class ResultFragment extends Fragment {
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // back to MainActivity
                 Intent intent = new Intent(requireActivity(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                requireActivity().finish(); // finish the current activity
+                requireActivity().finish();
             }
         });
-
-
     }
 }

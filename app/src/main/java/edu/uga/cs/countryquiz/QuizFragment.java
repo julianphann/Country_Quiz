@@ -64,7 +64,7 @@ public class QuizFragment extends Fragment {
         viewPager.setAdapter(adapter);
 
         // Optional: Improve performance by keeping adjacent pages in memory
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(1);
 
         // Log page changes (optional)
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
