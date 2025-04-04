@@ -23,6 +23,9 @@ public class QuizQuestionFragment extends Fragment {
     private int questionIndex;
     private QuizLayout quizLayout;
 
+    private boolean questionAnswered = false;
+
+
     /**
      * Creates a new instance of QuizQuestionFragment with the given question index.
      * @param questionIndex The index of the question to display.
@@ -98,8 +101,13 @@ public class QuizQuestionFragment extends Fragment {
         ((RadioButton) radioGroup.getChildAt(2)).setText("C. " + question.getChoices().get(2));
         radioGroup.clearCheck(); // Clear any previous selection
 
-        // Handle answer selection
+// Handle answer selection
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (questionAnswered) {
+                Log.d("QuizQuestionFragment", "Question already answered. No action taken.");
+                return; // Do nothing if the question has already been answered
+            }
+
             View radioButton = radioGroup.findViewById(checkedId);
             int selectedOption = radioGroup.indexOfChild(radioButton);
 
@@ -110,7 +118,16 @@ public class QuizQuestionFragment extends Fragment {
             } else {
                 Log.d("QuizQuestionFragment", "Incorrect answer selected.");
             }
+
+            // Mark question as answered
+            questionAnswered = true;
+
+            // Disable RadioGroup to prevent multiple selections
+            for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                radioGroup.getChildAt(i).setEnabled(false);
+            }
         });
+
     }
 
 
